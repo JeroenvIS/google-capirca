@@ -119,15 +119,15 @@ class FortigatePortMap(object):
       'all': 'ALL_UDP'
   }
   _PORTS_SCTP = {
-      #'53': 'DNS',
-      #'7': 'PING',
+      # '53': 'DNS',
+      # '7': 'PING',
       'all': 'ALL_SCTP'
   }
   _PROTO_MAP = {
       'icmp': 'ALL_ICMP',
       'icmpv6': 'ALL_ICMP6',
-      #'gre': 'GRE',
-      #'ip': 'ALL',
+      # 'gre': 'GRE',
+      # 'ip': 'ALL',
       'tcp': _PORTS_TCP,
       'udp': _PORTS_UDP,
       'sctp': _PORTS_SCTP
@@ -264,7 +264,7 @@ class ObjectsContainer(object):
       port_range = str(port[0])
       if port[0] != port[1]:
         port_range = str(min(port[0], port[1])) + '-' + \
-                     str(max(port[0], port[1]))
+            str(max(port[0], port[1]))
 
     return port_range
 
@@ -314,7 +314,8 @@ class ObjectsContainer(object):
       self,
       addrgrp_name,
       address,
-      address_exclude):
+      address_exclude
+    ):
     """Add address and exclude to address group store."""
     address_v4 = [x.with_prefixlen for x in address if
                   not isinstance(x, nacaddr.IPv6)]
@@ -348,7 +349,8 @@ class ObjectsContainer(object):
       addrgrp_name,
       address,
       address_exclude,
-      ip_v):
+      ip_v
+    ):
     """
     Generates an address or address group.
 
@@ -411,7 +413,8 @@ class ObjectsContainer(object):
       protocol,
       icmp_type,
       normalized_icmptype,
-      icmp_code):
+      icmp_code
+    ):
     """
     Processes ICMP Additions to Firewall Services.
 
@@ -421,7 +424,7 @@ class ObjectsContainer(object):
       return 'ALL_ICMP6' if protocol == 'icmpv6' else 'ALL_ICMP'
 
     icmp_service_name = protocol + '-type-' + icmp_type + \
-              (('-' + str(icmp_code)) if icmp_code else '')
+        (('-' + str(icmp_code)) if icmp_code else '')
     if icmp_service_name not in self._dict_services:
       protocol_set = []
       protocol_set += ['set protocol %s' %
@@ -488,7 +491,7 @@ class Term(aclgenerator.Term):
   Returns:
     string (all services separated by spaces).
   """
-    #if not protocols:
+    # if not protocols:
     #  raise FortiGateFindServiceError('protocol not found')
 
     ports = set()
@@ -531,7 +534,8 @@ class Term(aclgenerator.Term):
         icmp_service_grp = set()
         icmp_service_name = ''
         for icmp_type in sorted(
-            icmp_type_dict, key=icmp_type_dict.get):
+            icmp_type_dict, key=icmp_type_dict.get
+          ):
           if self._term.icmp_code:
             for each_code in sorted(self._term.icmp_code):
               icmp_service_name = self._obj_container.add_icmp_to_fw_services(
@@ -620,7 +624,7 @@ class Term(aclgenerator.Term):
     try:
       schedule_date = expiration.strftime('%H:%M %Y/%m/%d')
       return schedule_date
-    except ValueError as e:
+    except ValueError:
       raise FortiGateScheduleDateError(
           'Expiration is invalid datetime format.')
 
@@ -629,7 +633,8 @@ class Term(aclgenerator.Term):
 
     # process verbatim term
     if self.term.verbatim and (
-        not self.term.protocol or not self.term.action):
+        not self.term.protocol or not self.term.action
+      ):
       return self._process_verbatim_term()
 
     # Not support next action, skip this term
@@ -846,8 +851,7 @@ class Fortigate(aclgenerator.ACLGenerator):
                 'FortiGate from-id must be more than zero')
           Term.CURRENT_ID = int(from_id)
         elif filter_key == 'ngfw-mode':
-          if filter_val != 'profile-based' and \
-              filter_val != 'policy-based':
+          if filter_val != 'profile-based' and filter_val != 'policy-based':
             raise FilterError(
                 'FortiGate ngfw-mode only supports '
                 'profile-based or policy-based')
@@ -922,50 +926,50 @@ class Fortigate(aclgenerator.ACLGenerator):
     sys_settings = []
     if self._obj_container.get_sys_settings():
       sys_settings = start_sys_settings + \
-               self._obj_container.get_sys_settings() + \
-               end + ['']
+          self._obj_container.get_sys_settings() + \
+          end + ['']
 
     fw_addresses = []
     if self._obj_container.get_fw_addresses(4):
       fw_addresses += start_addresses_v4 + \
-              self._obj_container.get_fw_addresses(4) + \
-              end + ['']
+          self._obj_container.get_fw_addresses(4) + \
+          end + ['']
     if self._obj_container.get_fw_addresses(6):
       fw_addresses += start_addresses_v6 + \
-              self._obj_container.get_fw_addresses(6) + \
-              end + ['']
+          self._obj_container.get_fw_addresses(6) + \
+          end + ['']
 
     fw_addr_grps = []
     if self._obj_container.get_fw_addrgrps(4):
       fw_addr_grps += start_addrgrps_v4 + \
-              self._obj_container.get_fw_addrgrps(4) + \
-              end + ['']
+          self._obj_container.get_fw_addrgrps(4) + \
+          end + ['']
     if self._obj_container.get_fw_addrgrps(6):
       fw_addr_grps += start_addrgrps_v6 + \
-              self._obj_container.get_fw_addrgrps(6) + \
-              end + ['']
+          self._obj_container.get_fw_addrgrps(6) + \
+          end + ['']
 
     fw_services = []
     if self._obj_container.get_fw_services():
       fw_services = start_services + \
-              self._obj_container.get_fw_services() + \
-              end + ['']
+          self._obj_container.get_fw_services() + \
+          end + ['']
 
     fw_svc_grps = []
     if self._obj_container.get_fw_svcgrps():
       fw_svc_grps = start_svcgrps + \
-              self._obj_container.get_fw_svcgrps() + \
-              end + ['']
+          self._obj_container.get_fw_svcgrps() + \
+          end + ['']
 
     fw_schedules = []
     if self._obj_container.get_fw_schedules():
       fw_schedules = start_schedules + \
-               self._obj_container.get_fw_schedules() + \
-               end + ['']
+          self._obj_container.get_fw_schedules() + \
+          end + ['']
 
     fw_policies = start_policies + fw_policies + end
 
     target = sys_settings + fw_addresses + fw_addr_grps + \
-         fw_services + fw_svc_grps + fw_schedules + fw_policies
+        fw_services + fw_svc_grps + fw_schedules + fw_policies
 
     return '\n'.join(target)
